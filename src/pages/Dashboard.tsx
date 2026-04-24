@@ -20,6 +20,7 @@ export const Dashboard: React.FC = () => {
   const [medications, setMedications] = useState<Medication[]>([]);
   const [supabaseConnected, setSupabaseConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [showMonthDropdown, setShowMonthDropdown] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -87,6 +88,16 @@ export const Dashboard: React.FC = () => {
     setMedications(medications.filter(med => med.id !== id));
   };
 
+  const handleMonthSelect = (monthIndex: number) => {
+    setSelectedDate(new Date(selectedDate.getFullYear(), monthIndex, 1));
+    setShowMonthDropdown(false);
+  };
+
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
   const medicationsByPeriod = {
     Morning: medications.filter(m => m.period === 'Morning'),
     Noon: medications.filter(m => m.period === 'Noon'),
@@ -112,8 +123,23 @@ export const Dashboard: React.FC = () => {
           <div className="user-avatar">{avatarLetter}</div>
           <span className="user-name">{displayName}</span>
         </div>
-        <div className="month-selector">
-          {selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+        <div className="month-selector" style={{ position: 'relative', cursor: 'pointer' }}>
+          <div onClick={() => setShowMonthDropdown(!showMonthDropdown)}>
+            {selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+          </div>
+          {showMonthDropdown && (
+            <div className="month-dropdown">
+              {months.map((month, index) => (
+                <div
+                  key={month}
+                  className={`month-option ${index === selectedDate.getMonth() ? 'active' : ''}`}
+                  onClick={() => handleMonthSelect(index)}
+                >
+                  {month}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div
@@ -128,8 +154,6 @@ export const Dashboard: React.FC = () => {
               color: supabaseConnected ? '#2e7d32' : '#c62828',
             }}
           >
-            <span>{supabaseConnected ? '🟢' : '🔴'}</span>
-            <span>{supabaseConnected ? 'Supabase Connected' : 'Supabase Disconnected'}</span>
           </div>
           <button className="logout-btn" onClick={logout}>
             Logout

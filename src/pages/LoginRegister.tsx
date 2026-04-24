@@ -1,3 +1,4 @@
+// LoginRegister.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -29,25 +30,40 @@ export const LoginRegister: React.FC = () => {
 
     try {
       if (isLogin) {
+        // LOGIN
         if (!formData.email || !formData.password) {
           setError('Email and password are required');
+          setLoading(false);
           return;
         }
         await login(formData.email, formData.password);
       } else {
+        // REGISTER
         if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword || !formData.contactNumber) {
           setError('All fields are required');
+          setLoading(false);
           return;
         }
         if (formData.password !== formData.confirmPassword) {
           setError('Passwords do not match');
+          setLoading(false);
           return;
         }
-        await register(formData.name, formData.email, formData.password);
+        if (formData.password.length < 6) {
+          setError('Password must be at least 6 characters');
+          setLoading(false);
+          return;
+        }
+        await register(
+          formData.name,
+          formData.email,
+          formData.password,
+          formData.contactNumber
+        );
       }
       navigate('/dashboard');
-    } catch (err) {
-      setError('An error occurred. Please try again.');
+    } catch (err: any) {
+      setError(err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }

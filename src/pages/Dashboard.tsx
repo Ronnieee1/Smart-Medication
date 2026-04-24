@@ -17,9 +17,7 @@ export const Dashboard: React.FC = () => {
   const [showDayView, setShowDayView] = useState(false);
   const [showAddMedication, setShowAddMedication] = useState(false);
   const [activeTab, setActiveTab] = useState('main');
-  const [medications, setMedications] = useState<Medication[]>([
-  
-  ]);
+  const [medications, setMedications] = useState<Medication[]>([]);
   const [supabaseConnected, setSupabaseConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
 
@@ -29,6 +27,10 @@ export const Dashboard: React.FC = () => {
     time: '',
     period: 'Morning' as const,
   });
+
+  // Get display name safely
+  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+  const avatarLetter = displayName.charAt(0).toUpperCase();
 
   // Initialize Supabase on component mount
   useEffect(() => {
@@ -52,16 +54,18 @@ export const Dashboard: React.FC = () => {
     initSupabase();
   }, []);
 
+  // Debug user object
+  useEffect(() => {
+    console.log('👤 User object:', user);
+    console.log('📝 User metadata:', user?.user_metadata);
+  }, [user]);
+
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   };
 
   const getFirstDayOfMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-  };
-
-  const getDayOfWeek = (day: number) => {
-    return ['S', 'M', 'T', 'W', 'T', 'F', 'S'][day];
   };
 
   const handleAddMedication = (e: React.FormEvent) => {
@@ -105,8 +109,8 @@ export const Dashboard: React.FC = () => {
       {/* Header */}
       <div className="dashboard-header">
         <div className="user-info">
-          <div className="user-avatar">{user?.name.charAt(0).toUpperCase()}</div>
-          <span className="user-name">{user?.name}</span>
+          <div className="user-avatar">{avatarLetter}</div>
+          <span className="user-name">{displayName}</span>
         </div>
         <div className="month-selector">
           {selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
@@ -472,8 +476,9 @@ export const Dashboard: React.FC = () => {
           <div className="tab-content">
             <h2>Profile</h2>
             <div className="profile-info">
-              <p>Name: {user?.name}</p>
-              <p>Email: {user?.email}</p>
+              <p><strong>Name:</strong> {user?.user_metadata?.full_name || displayName}</p>
+              <p><strong>Email:</strong> {user?.email}</p>
+              <p><strong>User ID:</strong> {user?.id}</p>
             </div>
           </div>
         )}

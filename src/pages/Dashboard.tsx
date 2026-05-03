@@ -8,7 +8,8 @@ interface Medication {
   name: string;
   dosage: string;
   time: string;
-  period: 'Morning' | 'Noon' | 'Evening';
+  period: 'A.M.' | 'P.M.';
+  label: 'Maintenance' | 'Prescription' | 'Vitamins' | 'Supplements';
 }
 
 interface MedicineIntake {
@@ -18,6 +19,7 @@ interface MedicineIntake {
   scheduledTime: string;
   takenTime: string;
   status: 'on-time' | 'late' | 'missed';
+  label: 'Maintenance' | 'Prescription' | 'Vitamins' | 'Supplements';
   date: string;
 }
 
@@ -29,6 +31,7 @@ export const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('main');
   const [medications, setMedications] = useState<Medication[]>([]);
   const [medicineIntakeHistory, setMedicineIntakeHistory] = useState<MedicineIntake[]>([]);
+  const [progressFilter, setProgressFilter] = useState<'All' | 'Maintenance' | 'Prescription' | 'Vitamins' | 'Supplements'>('All');
   const [supabaseConnected, setSupabaseConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
@@ -37,7 +40,8 @@ export const Dashboard: React.FC = () => {
     name: '',
     dosage: '',
     time: '',
-    period: 'Morning' as const,
+    period: 'A.M.' as const,
+    label: 'Maintenance' as const,
   });
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
@@ -71,7 +75,7 @@ export const Dashboard: React.FC = () => {
     e.preventDefault();
     if (formData.name && formData.dosage && formData.time) {
       setMedications([...medications, { id: Date.now().toString(), ...formData }]);
-      setFormData({ name: '', dosage: '', time: '', period: 'Morning' });
+      setFormData({ name: '', dosage: '', time: '', period: 'A.M.', label: 'Maintenance' });
       setShowAddMedication(false);
     }
   };
@@ -84,12 +88,22 @@ export const Dashboard: React.FC = () => {
     setShowMonthDropdown(false);
   };
 
+  const convertTo12Hour = (time: string): string => {
+    if (!time) return '';
+    const [hours, minutes] = time.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minutes} ${ampm}`;
+  };
+
   const recordMedicineIntake = (
     medicationName: string,
     dosage: string,
     scheduledTime: string,
     takenTime: string,
-    status: 'on-time' | 'late' | 'missed'
+    status: 'on-time' | 'late' | 'missed',
+    label: 'Maintenance' | 'Prescription' | 'Vitamins' | 'Supplements'
   ) => {
     const newIntake: MedicineIntake = {
       id: Date.now().toString(),
@@ -98,6 +112,7 @@ export const Dashboard: React.FC = () => {
       scheduledTime,
       takenTime,
       status,
+      label,
       date: new Date().toISOString(),
     };
     setMedicineIntakeHistory([...medicineIntakeHistory, newIntake]);
@@ -105,9 +120,9 @@ export const Dashboard: React.FC = () => {
 
   // Sample data - you can remove this after connecting to Arduino
   const addSampleData = () => {
-    recordMedicineIntake('Aspirin', '1 tablet', '08:00', '08:05', 'on-time');
-    recordMedicineIntake('Vitamin D', '1 capsule', '12:00', '12:35', 'late');
-    recordMedicineIntake('Blood Pressure Med', '1 tablet', '20:00', '---', 'missed');
+    recordMedicineIntake('Aspirin', '1 tablet', '08:00', '08:05', 'on-time', 'Maintenance');
+    recordMedicineIntake('Vitamin D', '1 capsule', '12:00', '12:35', 'late', 'Vitamins');
+    recordMedicineIntake('Blood Pressure Med', '1 tablet', '20:00', '---', 'missed', 'Prescription');
   };
 
   const months = [
@@ -116,9 +131,8 @@ export const Dashboard: React.FC = () => {
   ];
 
   const medicationsByPeriod = {
-    Morning: medications.filter(m => m.period === 'Morning'),
-    Noon: medications.filter(m => m.period === 'Noon'),
-    Evening: medications.filter(m => m.period === 'Evening'),
+    'A.M.': medications.filter(m => m.period === 'A.M.'),
+    'P.M.': medications.filter(m => m.period === 'P.M.'),
   };
 
   const daysInMonth = getDaysInMonth(selectedDate);
@@ -176,9 +190,20 @@ export const Dashboard: React.FC = () => {
               value={formData.period}
               onChange={e => setFormData({ ...formData, period: e.target.value as typeof formData.period })}
             >
-              <option>Morning</option>
-              <option>Noon</option>
-              <option>Evening</option>
+              <option>A.M.</option>
+              <option>P.M.</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Category</label>
+            <select
+              value={formData.label}
+              onChange={e => setFormData({ ...formData, label: e.target.value as typeof formData.label })}
+            >
+              <option>Maintenance</option>
+              <option>Prescription</option>
+              <option>Vitamins</option>
+              <option>Supplements</option>
             </select>
           </div>
           <button type="submit" className="submit-btn">Add Medication</button>
@@ -309,13 +334,12 @@ export const Dashboard: React.FC = () => {
 
               {/* Medications — right, row 2 */}
               <div className="medications-container">
-                {(['Morning', 'Noon', 'Evening'] as const).map(period => (
+                {(['A.M.', 'P.M.'] as const).map(period => (
                   <div key={period} className="period-section">
                     <div className="period-header">
                       <span className="period-icon">
-                        {period === 'Morning' && '🌅'}
-                        {period === 'Noon'    && '☀️'}
-                        {period === 'Evening' && '🌙'}
+                        {period === 'A.M.' && '🌅'}
+                        {period === 'P.M.' && '🌙'}
                       </span>
                       {period}
                     </div>
@@ -328,7 +352,7 @@ export const Dashboard: React.FC = () => {
                               <div className="med-name">{med.name}</div>
                               <div className="med-dosage">{med.dosage}</div>
                             </div>
-                            <div className="med-time">{med.time}</div>
+                            <div className="med-time">{convertTo12Hour(med.time)}</div>
                             <button className="delete-btn" onClick={() => handleDeleteMedication(med.id)}>✕</button>
                           </div>
                         ))
@@ -369,16 +393,15 @@ export const Dashboard: React.FC = () => {
                   <>
                     <h2 className="day-title">Your medications today</h2>
                     <div className="day-medications">
-                      {(['Morning', 'Noon', 'Evening'] as const).map(period => {
+                      {(['A.M.', 'P.M.'] as const).map(period => {
                         const periodMeds = medicationsByPeriod[period];
                         if (periodMeds.length === 0) return null;
                         return (
                           <div key={period} className="day-period">
                             <div className="day-period-header">
                               <span className="period-icon">
-                                {period === 'Morning' && '🌅'}
-                                {period === 'Noon'    && '☀️'}
-                                {period === 'Evening' && '🌙'}
+                                {period === 'A.M.' && '🌅'}
+                                {period === 'P.M.' && '🌙'}
                               </span>
                               {period}
                             </div>
@@ -389,7 +412,7 @@ export const Dashboard: React.FC = () => {
                                     <div className="day-med-name">{med.name}</div>
                                     <div className="day-med-dosage">{med.dosage}</div>
                                   </div>
-                                  <div className="day-med-time">{med.time}</div>
+                                  <div className="day-med-time">{convertTo12Hour(med.time)}</div>
                                   <button className="delete-btn" onClick={() => handleDeleteMedication(med.id)}>✕</button>
                                 </div>
                               ))}
@@ -421,23 +444,59 @@ export const Dashboard: React.FC = () => {
                 </button>
               )}
               
+              {/* Filter Buttons */}
+              {medicineIntakeHistory.length > 0 && (
+                <div className="filter-buttons">
+                  <button 
+                    className={`filter-btn ${progressFilter === 'All' ? 'active' : ''}`}
+                    onClick={() => setProgressFilter('All')}
+                  >
+                    All
+                  </button>
+                  <button 
+                    className={`filter-btn ${progressFilter === 'Maintenance' ? 'active' : ''}`}
+                    onClick={() => setProgressFilter('Maintenance')}
+                  >
+                    Maintenance
+                  </button>
+                  <button 
+                    className={`filter-btn ${progressFilter === 'Prescription' ? 'active' : ''}`}
+                    onClick={() => setProgressFilter('Prescription')}
+                  >
+                    Prescription
+                  </button>
+                  <button 
+                    className={`filter-btn ${progressFilter === 'Vitamins' ? 'active' : ''}`}
+                    onClick={() => setProgressFilter('Vitamins')}
+                  >
+                    Vitamins
+                  </button>
+                  <button 
+                    className={`filter-btn ${progressFilter === 'Supplements' ? 'active' : ''}`}
+                    onClick={() => setProgressFilter('Supplements')}
+                  >
+                    Supplements
+                  </button>
+                </div>
+              )}
+              
               {/* Status Cards */}
               <div className="status-cards">
                 <div className="status-card on-time">
                   <div className="status-icon">✓</div>
-                  <div className="status-count">{medicineIntakeHistory.filter(m => m.status === 'on-time').length}</div>
+                  <div className="status-count">{medicineIntakeHistory.filter(m => m.status === 'on-time' && (progressFilter === 'All' || m.label === progressFilter)).length}</div>
                   <div className="status-label">On Time</div>
                 </div>
                 
                 <div className="status-card late">
                   <div className="status-icon">⏱</div>
-                  <div className="status-count">{medicineIntakeHistory.filter(m => m.status === 'late').length}</div>
+                  <div className="status-count">{medicineIntakeHistory.filter(m => m.status === 'late' && (progressFilter === 'All' || m.label === progressFilter)).length}</div>
                   <div className="status-label">Late</div>
                 </div>
                 
                 <div className="status-card missed">
                   <div className="status-icon">✕</div>
-                  <div className="status-count">{medicineIntakeHistory.filter(m => m.status === 'missed').length}</div>
+                  <div className="status-count">{medicineIntakeHistory.filter(m => m.status === 'missed' && (progressFilter === 'All' || m.label === progressFilter)).length}</div>
                   <div className="status-label">Missed</div>
                 </div>
               </div>
@@ -447,16 +506,17 @@ export const Dashboard: React.FC = () => {
                 <h3>Medicine History</h3>
                 {medicineIntakeHistory.length > 0 ? (
                   <div className="history-list">
-                    {[...medicineIntakeHistory].reverse().map((intake) => (
+                    {[...medicineIntakeHistory].reverse().filter(intake => progressFilter === 'All' || intake.label === progressFilter).map((intake) => (
                       <div key={intake.id} className={`history-item status-${intake.status}`}>
                         <div className="history-item-left">
                           <div className="history-med-name">{intake.medicationName}</div>
                           <div className="history-med-dosage">{intake.dosage}</div>
                           <div className="history-med-date">{new Date(intake.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                          <div className="history-med-label">{intake.label}</div>
                         </div>
                         <div className="history-item-middle">
-                          <div className="history-time">Scheduled: {intake.scheduledTime}</div>
-                          <div className="history-time">Taken: {intake.takenTime}</div>
+                          <div className="history-time">Scheduled: {convertTo12Hour(intake.scheduledTime)}</div>
+                          <div className="history-time">Taken: {intake.takenTime === '---' ? '---' : convertTo12Hour(intake.takenTime)}</div>
                         </div>
                         <div className={`history-status status-badge-${intake.status}`}>
                           {intake.status === 'on-time' && 'On Time'}

@@ -742,7 +742,6 @@ export const Dashboard: React.FC = () => {
                               day
                             )
                           );
-                          setShowDayView(true);
                         }
                       }}
                     >
@@ -1070,7 +1069,7 @@ export const Dashboard: React.FC = () => {
                   <strong>Email:</strong> {user?.email}
                 </p>
                 <p>
-                  <strong>User ID:</strong> {user?.id}
+                  <strong>Contact Number:</strong> {user?.user_metadata?.phone_number || 'Not provided'}
                 </p>
               </div>
             </div>

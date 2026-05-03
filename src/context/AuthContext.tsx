@@ -55,13 +55,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const register = async (name: string, email: string, password: string, contactNumber: string) => {
-    // 1. Sign up with Supabase Auth
+    // 1. Sign up with Supabase Auth and store metadata
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: name,
+          phone_number: contactNumber,
         }
       }
     });
@@ -71,18 +72,31 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     if (data.user) {
-      // 2. Save additional data to user_credentials table
+      // 2. Update user metadata to ensure phone_number is saved
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: {
+          full_name: name,
+          phone_number: contactNumber,
+        }
+      });
+
+      if (updateError) {
+        console.error('Failed to update user metadata:', updateError);
+        throw new Error('Registration successful but failed to save phone number');
+      }
+
+      // 3. Also save to user_credentials table for backup
       const { error: insertError } = await supabase
         .from('user_credentials')
-        .update({
+        .insert({
+          user_id: data.user.id,
           full_name: name,
           contact_number: contactNumber,
-        })
-        .eq('user_id', data.user.id);
+        });
 
       if (insertError) {
         console.error('Failed to save user credentials:', insertError);
-        throw new Error('Registration successful but failed to save profile data');
+        // Don't throw here - auth metadata was saved successfully
       }
 
       setUser(data.user);

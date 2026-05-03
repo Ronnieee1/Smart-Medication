@@ -40,6 +40,7 @@ export const Dashboard: React.FC = () => {
     name: '',
     dosage: '',
     time: '',
+    timeDisplay: '',
     period: 'A.M.' as const,
     label: 'Maintenance' as const,
   });
@@ -74,8 +75,8 @@ export const Dashboard: React.FC = () => {
   const handleAddMedication = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.name && formData.dosage && formData.time) {
-      setMedications([...medications, { id: Date.now().toString(), ...formData }]);
-      setFormData({ name: '', dosage: '', time: '', period: 'A.M.', label: 'Maintenance' });
+      setMedications([...medications, { id: Date.now().toString(), name: formData.name, dosage: formData.dosage, time: formData.time, period: formData.period, label: formData.label }]);
+      setFormData({ name: '', dosage: '', time: '', timeDisplay: '', period: 'A.M.', label: 'Maintenance' });
       setShowAddMedication(false);
     }
   };
@@ -92,9 +93,37 @@ export const Dashboard: React.FC = () => {
     if (!time) return '';
     const [hours, minutes] = time.split(':');
     const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const ampm = hour >= 12 ? 'P.M.' : 'A.M.';
     const hour12 = hour % 12 || 12;
-    return `${hour12}:${minutes} ${ampm}`;
+    return `${String(hour12).padStart(2, '0')}:${minutes} ${ampm}`;
+  };
+
+  const convert12To24Hour = (time12: string): { time24: string; period: 'A.M.' | 'P.M.' } => {
+    if (!time12) return { time24: '', period: 'A.M.' };
+    const [timeStr, period] = time12.split(' ');
+    const [hours, minutes] = timeStr.split(':');
+    let hour = parseInt(hours);
+    
+    if (period === 'P.M.' && hour !== 12) {
+      hour += 12;
+    } else if (period === 'A.M.' && hour === 12) {
+      hour = 0;
+    }
+    
+    return {
+      time24: `${String(hour).padStart(2, '0')}:${minutes}`,
+      period: period as 'A.M.' | 'P.M.'
+    };
+  };
+
+  const handleTimeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const timeValue = e.target.value;
+    if (timeValue) {
+      const display = convertTo12Hour(timeValue);
+      setFormData(prev => ({ ...prev, time: timeValue, timeDisplay: display }));
+    } else {
+      setFormData(prev => ({ ...prev, time: '', timeDisplay: '' }));
+    }
   };
 
   const recordMedicineIntake = (
@@ -147,14 +176,15 @@ export const Dashboard: React.FC = () => {
     { key: 'profile',  icon: '◈', label: 'Profile'     },
   ];
 
-  const AddMedicationForm = () => (
-    <div className="add-med-modal">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h2>Add New Medication</h2>
-          <button className="close-btn" onClick={() => setShowAddMedication(false)}>✕</button>
-        </div>
-        <form onSubmit={handleAddMedication}>
+  const AddMedicationForm = () => {
+    return (
+      <div className="add-med-modal">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h2>Add New Medication</h2>
+            <button className="close-btn" onClick={() => setShowAddMedication(false)}>✕</button>
+          </div>
+          <form onSubmit={handleAddMedication}>
           <div className="form-group">
             <label>Medication Name</label>
             <input
@@ -180,19 +210,14 @@ export const Dashboard: React.FC = () => {
             <input
               type="time"
               value={formData.time}
-              onChange={e => setFormData({ ...formData, time: e.target.value })}
+              onChange={handleTimeInputChange}
               required
             />
-          </div>
-          <div className="form-group">
-            <label>Period</label>
-            <select
-              value={formData.period}
-              onChange={e => setFormData({ ...formData, period: e.target.value as typeof formData.period })}
-            >
-              <option>A.M.</option>
-              <option>P.M.</option>
-            </select>
+            {formData.timeDisplay && (
+              <small style={{ color: '#3ecfc0', fontSize: '11px', marginTop: '6px', display: 'block', fontWeight: '600' }}>
+                ✓ {formData.timeDisplay}
+              </small>
+            )}
           </div>
           <div className="form-group">
             <label>Category</label>
@@ -210,7 +235,8 @@ export const Dashboard: React.FC = () => {
         </form>
       </div>
     </div>
-  );
+    );
+  };
 
   return (
     <div className="dashboard-container">

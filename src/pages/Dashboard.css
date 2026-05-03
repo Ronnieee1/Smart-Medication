@@ -674,8 +674,280 @@
 .profile-info strong { color: var(--text-main); }
 
 /* ════════════════════════════
+   PROGRESS TRACKING
+════════════════════════════ */
+.progress-container {
+  background: white;
+  padding: 28px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  border: 1.5px solid #e8f6f4;
+}
+
+.progress-container h2 {
+  color: var(--text-main);
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.progress-container > p {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.add-sample-btn {
+  background: var(--teal-grad);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-family: 'Nunito', sans-serif;
+  transition: all 0.2s;
+}
+
+.add-sample-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(62, 207, 192, 0.4);
+}
+
+/* Status Cards Row */
+.status-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.status-card {
+  padding: 20px;
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid #e8f6f4;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.status-card.on-time {
+  background: linear-gradient(135deg, #d4f5f0 0%, #bef0e8 100%);
+  border-color: #3ecfc0;
+}
+
+.status-card.on-time:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(62, 207, 192, 0.25);
+}
+
+.status-card.late {
+  background: linear-gradient(135deg, #fff8e1 0%, #ffe8a8 100%);
+  border-color: #ffc107;
+}
+
+.status-card.late:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 193, 7, 0.25);
+}
+
+.status-card.missed {
+  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+  border-color: #e05c5c;
+}
+
+.status-card.missed:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(224, 92, 92, 0.25);
+}
+
+.status-icon {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.status-card.on-time .status-icon {
+  color: #1b6e5c;
+}
+
+.status-card.late .status-icon {
+  color: #e8a600;
+}
+
+.status-card.missed .status-icon {
+  color: #c84a4a;
+}
+
+.status-count {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.status-label {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+/* Medicine History */
+.medicine-history {
+  margin-top: 24px;
+}
+
+.medicine-history h3 {
+  color: var(--text-main);
+  margin-bottom: 16px;
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border-left: 4px solid;
+  background: #f9fffe;
+  transition: all 0.2s ease;
+}
+
+.history-item:hover {
+  background: #f0fbfa;
+  box-shadow: 0 2px 8px rgba(62, 207, 192, 0.12);
+}
+
+.history-item.status-on-time {
+  border-left-color: #3ecfc0;
+  background: rgba(212, 245, 240, 0.5);
+}
+
+.history-item.status-late {
+  border-left-color: #ffc107;
+  background: rgba(255, 248, 225, 0.5);
+}
+
+.history-item.status-missed {
+  border-left-color: #e05c5c;
+  background: rgba(255, 235, 238, 0.5);
+}
+
+.history-item-left {
+  flex: 1;
+  text-align: left;
+  min-width: 120px;
+}
+
+.history-med-name {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 13px;
+}
+
+.history-med-dosage {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.history-med-date {
+  color: var(--text-muted);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.history-item-middle {
+  flex: 1;
+  text-align: left;
+  min-width: 150px;
+}
+
+.history-time {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin: 2px 0;
+}
+
+.history-time:first-child {
+  margin-top: 0;
+}
+
+.history-status {
+  text-align: right;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.status-badge-on-time {
+  background: #d4f5f0;
+  color: #1b6e5c;
+}
+
+.status-badge-late {
+  background: #fff8e1;
+  color: #e8a600;
+}
+
+.status-badge-missed {
+  background: #ffebee;
+  color: #c84a4a;
+}
+
+.no-history {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+  border-radius: var(--radius-sm);
+  background: #f9fffe;
+}
+
+/* ════════════════════════════
    RESPONSIVE
 ════════════════════════════ */
+@media (max-width: 1024px) {
+  .status-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .status-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .history-item {
+    flex-wrap: wrap;
+  }
+
+  .history-item-middle {
+    width: 100%;
+    margin-top: 8px;
+  }
+}
 @media (max-width: 1024px) {
   .main-grid { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto; }
   .calendar-section { grid-column: 1; grid-row: 1; }

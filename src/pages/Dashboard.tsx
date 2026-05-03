@@ -11,6 +11,16 @@ interface Medication {
   period: 'Morning' | 'Noon' | 'Evening';
 }
 
+interface MedicineIntake {
+  id: string;
+  medicationName: string;
+  dosage: string;
+  scheduledTime: string;
+  takenTime: string;
+  status: 'on-time' | 'late' | 'missed';
+  date: string;
+}
+
 export const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -18,6 +28,7 @@ export const Dashboard: React.FC = () => {
   const [showAddMedication, setShowAddMedication] = useState(false);
   const [activeTab, setActiveTab] = useState('main');
   const [medications, setMedications] = useState<Medication[]>([]);
+  const [medicineIntakeHistory, setMedicineIntakeHistory] = useState<MedicineIntake[]>([]);
   const [supabaseConnected, setSupabaseConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
@@ -71,6 +82,32 @@ export const Dashboard: React.FC = () => {
   const handleMonthSelect = (monthIndex: number) => {
     setSelectedDate(new Date(selectedDate.getFullYear(), monthIndex, 1));
     setShowMonthDropdown(false);
+  };
+
+  const recordMedicineIntake = (
+    medicationName: string,
+    dosage: string,
+    scheduledTime: string,
+    takenTime: string,
+    status: 'on-time' | 'late' | 'missed'
+  ) => {
+    const newIntake: MedicineIntake = {
+      id: Date.now().toString(),
+      medicationName,
+      dosage,
+      scheduledTime,
+      takenTime,
+      status,
+      date: new Date().toISOString(),
+    };
+    setMedicineIntakeHistory([...medicineIntakeHistory, newIntake]);
+  };
+
+  // Sample data - you can remove this after connecting to Arduino
+  const addSampleData = () => {
+    recordMedicineIntake('Aspirin', '1 tablet', '08:00', '08:05', 'on-time');
+    recordMedicineIntake('Vitamin D', '1 capsule', '12:00', '12:35', 'late');
+    recordMedicineIntake('Blood Pressure Med', '1 tablet', '20:00', '---', 'missed');
   };
 
   const months = [
@@ -374,9 +411,67 @@ export const Dashboard: React.FC = () => {
           )}
 
           {activeTab === 'progress' && (
-            <div className="tab-content">
+            <div className="progress-container">
               <h2>Progress Tracking</h2>
               <p>Track your medication adherence and health progress here.</p>
+              
+              {medicineIntakeHistory.length === 0 && (
+                <button className="add-sample-btn" onClick={addSampleData}>
+                  Add Sample Data (Demo)
+                </button>
+              )}
+              
+              {/* Status Cards */}
+              <div className="status-cards">
+                <div className="status-card on-time">
+                  <div className="status-icon">✓</div>
+                  <div className="status-count">{medicineIntakeHistory.filter(m => m.status === 'on-time').length}</div>
+                  <div className="status-label">On Time</div>
+                </div>
+                
+                <div className="status-card late">
+                  <div className="status-icon">⏱</div>
+                  <div className="status-count">{medicineIntakeHistory.filter(m => m.status === 'late').length}</div>
+                  <div className="status-label">Late</div>
+                </div>
+                
+                <div className="status-card missed">
+                  <div className="status-icon">✕</div>
+                  <div className="status-count">{medicineIntakeHistory.filter(m => m.status === 'missed').length}</div>
+                  <div className="status-label">Missed</div>
+                </div>
+              </div>
+
+              {/* Medicine History */}
+              <div className="medicine-history">
+                <h3>Medicine History</h3>
+                {medicineIntakeHistory.length > 0 ? (
+                  <div className="history-list">
+                    {[...medicineIntakeHistory].reverse().map((intake) => (
+                      <div key={intake.id} className={`history-item status-${intake.status}`}>
+                        <div className="history-item-left">
+                          <div className="history-med-name">{intake.medicationName}</div>
+                          <div className="history-med-dosage">{intake.dosage}</div>
+                          <div className="history-med-date">{new Date(intake.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                        </div>
+                        <div className="history-item-middle">
+                          <div className="history-time">Scheduled: {intake.scheduledTime}</div>
+                          <div className="history-time">Taken: {intake.takenTime}</div>
+                        </div>
+                        <div className={`history-status status-badge-${intake.status}`}>
+                          {intake.status === 'on-time' && 'On Time'}
+                          {intake.status === 'late' && 'Late'}
+                          {intake.status === 'missed' && 'Missed'}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="no-history">
+                    <p>No medicine intake history yet. Start tracking your medication!</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 

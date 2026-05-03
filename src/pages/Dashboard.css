@@ -504,7 +504,6 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  pointer-events: none;
 }
 
 .modal-content {
@@ -517,7 +516,6 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(42, 167, 212, 0.2);
-  pointer-events: auto;
 }
 
 @keyframes fadeIn {
@@ -1006,6 +1004,66 @@
   .dashboard-header { padding: 14px 16px 10px; }
 }
 
-@media (max-width: 480px) {
-  /* Empty media query - header nav already removed */
+/* ── Paste these additions into your existing Dashboard.css ── */
+
+/* Status button group on each medication card */
+.med-status-btns {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.status-btn {
+  background: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+  color: #aaa;
+}
+
+.status-btn:hover {
+  background: #f5f5f5;
+  border-color: #bbb;
+}
+
+.status-btn.active {
+  background: #f0faf7;
+  border-color: currentColor;
+  font-weight: bold;
+}
+
+/* Scheduled date info bar in add medication modal */
+.scheduled-date-info {
+  background: #f0faf7;
+  border: 1px solid #c5e8df;
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #0f6e56;
+}
+
+/* Success banner - appears at top of content after saving */
+.success-banner {
+  background: var(--color-background-success);
+  color: var(--color-text-success);
+  border: 1px solid var(--color-border-success);
+  border-radius: var(--border-radius-md);
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  animation: fadeInDown 0.25s ease;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }

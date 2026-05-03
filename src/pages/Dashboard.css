@@ -1,145 +1,313 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --teal-grad: linear-gradient(135deg, #4dd9c0 0%, #3ab5d8 100%);
+  --sidebar-grad: linear-gradient(180deg, #3ecfc0 0%, #2aa7d4 100%);
+  --bg: #eef9f8;
+  --card-bg: #ffffff;
+  --text-main: #2d4a56;
+  --text-muted: #7fa8b5;
+  --accent: #3ecfc0;
+  --accent-hover: #2fbdaf;
+  --danger: #e05c5c;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow-card: 0 4px 20px rgba(62, 207, 192, 0.1);
+  --shadow-sidebar: 4px 0 24px rgba(42, 167, 212, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Root: full viewport row ── */
 .dashboard-container {
   display: flex;
-  flex-direction: column;
   height: 100vh;
-  background-color: #f5f5f5;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  width: 100%;
+  background: var(--bg);
+  font-family: 'Nunito', sans-serif;
+  color: var(--text-main);
+  overflow: hidden;
 }
 
-.dashboard-header {
-  background: white;
-  padding: 16px 20px;
+/* ════════════════════════════
+   SIDEBAR
+════════════════════════════ */
+.dashboard-sidebar {
+  width: 200px;
+  min-width: 200px;
+  background: var(--sidebar-grad);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border-bottom: 1px solid #eee;
+  flex-direction: column;
+  padding: 28px 0 24px;
+  box-shadow: var(--shadow-sidebar);
+  z-index: 10;
+  flex-shrink: 0;
 }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.sidebar-logo {
+  padding: 0 22px 32px;
   color: white;
+  font-size: 20px;
+  font-weight: 800;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 18px;
+  gap: 8px;
+  letter-spacing: -0.3px;
 }
 
-.user-name {
-  color: #333;
+.sidebar-logo-icon {
+  font-size: 22px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 12px;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
   font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: none;
+  text-align: left;
+  width: 100%;
+  font-family: 'Nunito', sans-serif;
+}
+
+.sidebar-nav-item:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.sidebar-nav-item.active {
+  background: rgba(255, 255, 255, 0.28);
+  color: white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-nav-icon {
   font-size: 16px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Logout pinned to bottom of sidebar */
+.sidebar-bottom {
+  padding: 0 12px;
+  margin-top: 12px;
+}
+
+.sidebar-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 14px;
+  background: rgba(255, 255, 255, 0.18);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  transition: background 0.2s;
+}
+
+.sidebar-logout-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* ════════════════════════════
+   MAIN AREA
+════════════════════════════ */
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* ── Top Header ── */
+.dashboard-header {
+  background: var(--bg);
+  padding: 16px 28px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .month-selector {
-  color: #666;
-  font-weight: 500;
-  font-size: 14px;
-  flex: 1;
-  text-align: center;
+  position: relative;
+  cursor: pointer;
 }
 
 .month-selector > div {
-  padding: 8px 12px;
-  border-radius: 6px;
-  transition: background-color 0.2s;
+  padding: 7px 14px;
+  border-radius: 20px;
+  background: white;
+  border: 1.5px solid #d8f0ee;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.2s;
 }
 
-.month-selector > div:hover {
-  background-color: #f0f0f0;
-}
+.month-selector > div:hover { border-color: var(--accent); }
 
 .month-dropdown {
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  top: calc(100% + 8px);
+  right: 0;
   background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin-top: 8px;
-  min-width: 200px;
-  z-index: 1000;
-  max-height: 300px;
+  border: 1.5px solid #d8f0ee;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 30px rgba(62, 207, 192, 0.18);
+  min-width: 180px;
+  z-index: 200;
+  max-height: 280px;
   overflow-y: auto;
 }
 
 .month-option {
-  padding: 12px 16px;
+  padding: 11px 16px;
   cursor: pointer;
-  color: #333;
-  transition: all 0.2s;
-  text-align: left;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s;
 }
 
-.month-option:hover {
-  background-color: #f5f5f5;
-  color: #667eea;
-}
+.month-option:hover { background: #eef9f8; color: var(--accent); }
+.month-option.active { background: #d4f5f0; color: var(--accent); font-weight: 700; }
 
-.month-option.active {
-  background-color: #e8f0fe;
-  color: #667eea;
-  font-weight: 600;
-}
-
-.logout-btn {
-  background-color: #fee;
-  color: #c33;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
-  transition: background-color 0.3s;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
 }
 
-.logout-btn:hover {
-  background-color: #fdd;
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--teal-grad);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+  flex-shrink: 0;
+  box-shadow: 0 3px 12px rgba(62, 207, 192, 0.35);
 }
 
+/* ── Scrollable content ── */
 .main-content {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
-  padding-bottom: 80px;
+  padding: 0 28px 28px;
 }
 
-/* Calendar Section */
+/* ── Error Banner ── */
+.error-banner {
+  background: #fff0f0;
+  border: 1.5px solid #ffd0d0;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ════════════════════════════
+   MAIN TAB GRID LAYOUT
+   Left col (calendar) bigger, right col (mood + meds) smaller
+════════════════════════════ */
+.main-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  grid-template-rows: auto 1fr auto;
+  gap: 16px;
+  height: 100%;
+}
+
+/* Calendar — tall, spans left column rows 1+2 */
 .calendar-section {
-  background: white;
-  padding: 16px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  grid-column: 1;
+  grid-row: 1 / 3;
+  background: var(--teal-grad);
+  padding: 28px;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 28px rgba(62, 207, 192, 0.28);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.calendar-section::before {
+  content: '';
+  position: absolute;
+  right: -50px;
+  top: -50px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.calendar-label {
+  font-size: 15px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.9);
+  position: relative;
+  z-index: 1;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .calendar-header {
   text-align: center;
-  font-weight: 600;
-  color: #999;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.65);
   font-size: 12px;
-  padding: 8px 0;
+  padding: 6px 0;
 }
 
 .calendar-day {
@@ -148,217 +316,211 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: #f9f9f9;
-  color: #666;
-  font-size: 14px;
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   border: 2px solid transparent;
 }
 
-.calendar-day:not(.empty):hover {
-  background: #f0f0f0;
-}
+.calendar-day:not(.empty):hover { background: rgba(255, 255, 255, 0.28); }
+.calendar-day.active { background: white; color: var(--accent); font-weight: 800; border-color: white; }
+.calendar-day.empty { cursor: default; background: none; }
 
-.calendar-day.active {
-  background: #333;
-  color: white;
-  font-weight: 600;
-  border-color: #333;
-}
-
-.calendar-day.empty {
-  cursor: default;
-  background: none;
-}
-
-/* Mood Section */
+/* Mood — right col, row 1 */
 .mood-section {
+  grid-column: 2;
+  grid-row: 1;
   background: white;
-  padding: 16px;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
-  transition: background-color 0.2s;
-  color: #666;
-  font-weight: 500;
+  transition: all 0.2s;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 14px;
+  border: 1.5px solid #e8f6f4;
 }
 
 .mood-section:hover {
-  background: #f9f9f9;
+  border-color: var(--accent);
+  box-shadow: 0 4px 20px rgba(62, 207, 192, 0.2);
 }
 
-.mood-icon {
-  font-size: 20px;
-  margin-right: 12px;
-}
+.mood-icon { font-size: 22px; margin-right: 10px; }
+.arrow { color: var(--accent); font-size: 18px; font-weight: 800; }
 
-.arrow {
-  color: #ccc;
-  font-size: 18px;
-}
-
-/* Medications Container */
+/* Medications — right col, row 2 (fills remaining height) */
 .medications-container {
+  grid-column: 2;
+  grid-row: 2;
   background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius);
+  overflow-y: auto;
+  box-shadow: var(--shadow-card);
+  border: 1.5px solid #e8f6f4;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Add button — full width, row 3 */
+.add-medication-btn {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  width: 100%;
+  padding: 14px;
+  background: var(--teal-grad);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  transition: all 0.25s;
+  box-shadow: 0 4px 18px rgba(62, 207, 192, 0.35);
+}
+
+.add-medication-btn:hover {
+  box-shadow: 0 6px 24px rgba(62, 207, 192, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Period sections */
 .period-section {
-  border-bottom: 1px solid #eee;
-  padding: 16px;
+  border-bottom: 1px solid #edf8f6;
+  padding: 14px 16px;
+  flex-shrink: 0;
 }
 
-.period-section:last-child {
-  border-bottom: none;
-}
+.period-section:last-child { border-bottom: none; }
 
 .period-header {
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
-  color: #999;
-  font-weight: 600;
-  font-size: 12px;
+  margin-bottom: 10px;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
 }
 
-.period-icon {
-  font-size: 16px;
-  margin-right: 8px;
-}
+.period-icon { font-size: 14px; margin-right: 7px; }
 
 .medications-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7px;
 }
 
 .medication-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  transition: background-color 0.2s;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #f4fbfa;
+  border-radius: var(--radius-sm);
+  border: 1px solid #e0f4f1;
+  transition: all 0.2s;
 }
 
 .medication-item:hover {
-  background: #f0f0f0;
+  border-color: var(--accent);
+  box-shadow: 0 2px 10px rgba(62, 207, 192, 0.12);
 }
 
 .med-avatar {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: #e6f0ff;
+  background: linear-gradient(135deg, #d4f5f0 0%, #c2eef8 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 17px;
   flex-shrink: 0;
 }
 
-.med-info {
-  flex: 1;
-}
+.med-info { flex: 1; min-width: 0; }
 
 .med-name {
-  font-weight: 600;
-  color: #333;
-  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.med-dosage {
-  color: #999;
-  font-size: 12px;
-  margin-top: 2px;
-}
-
-.med-time {
-  color: #667eea;
-  font-weight: 600;
-  font-size: 14px;
-}
+.med-dosage { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+.med-time { color: var(--accent); font-weight: 700; font-size: 13px; white-space: nowrap; flex-shrink: 0; }
 
 .delete-btn {
   background: none;
   border: none;
-  color: #ccc;
+  color: #c5dde0;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 13px;
   padding: 4px;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: color 0.2s;
+  flex-shrink: 0;
 }
 
-.delete-btn:hover {
-  color: #c33;
-}
+.delete-btn:hover { color: var(--danger); background: rgba(224, 92, 92, 0.1); }
 
 .no-meds {
-  color: #999;
-  font-size: 14px;
+  color: var(--text-muted);
+  font-size: 12px;
   text-align: center;
-  padding: 20px;
+  padding: 14px 8px;
+  font-weight: 500;
 }
 
-/* Add Medication Button */
-.add-medication-btn {
-  width: 100%;
-  padding: 14px;
-  background: #333;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.3s;
-}
-
-.add-medication-btn:hover {
-  background: #444;
-}
-
-/* Modal */
+/* ════════════════════════════
+   MODAL — centered for laptop
+════════════════════════════ */
 .add-med-modal {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(45, 74, 86, 0.35);
+  backdrop-filter: blur(4px);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   z-index: 1000;
 }
 
 .modal-content {
   background: white;
   width: 100%;
-  border-radius: 16px 16px 0 0;
-  padding: 20px;
-  animation: slideUp 0.3s ease-out;
-  max-height: 80vh;
+  max-width: 460px;
+  border-radius: var(--radius);
+  padding: 28px;
+  animation: fadeIn 0.25s ease-out;
+  max-height: 90vh;
   overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(42, 167, 212, 0.2);
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 .modal-header {
@@ -366,154 +528,168 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1.5px solid #edf8f6;
   padding-bottom: 16px;
 }
 
-.modal-header h2 {
-  margin: 0;
-  color: #333;
-  font-size: 20px;
-}
+.modal-header h2 { margin: 0; color: var(--text-main); font-size: 18px; font-weight: 800; }
 
 .close-btn {
-  background: none;
+  background: #f0fbfa;
   border: none;
-  color: #999;
-  font-size: 24px;
+  color: var(--text-muted);
+  font-size: 18px;
   cursor: pointer;
-  padding: 0;
   width: 32px;
   height: 32px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s;
 }
 
-.close-btn:hover {
-  color: #333;
-}
+.close-btn:hover { background: #d4f5f0; color: var(--accent); }
 
-.modal-content .form-group {
-  margin-bottom: 16px;
-}
+.modal-content .form-group { margin-bottom: 14px; }
 
 .modal-content .form-group label {
   display: block;
-  margin-bottom: 8px;
-  color: #333;
-  font-weight: 600;
-  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 13px;
 }
 
 .modal-content .form-group input,
 .modal-content .form-group select {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: 11px 14px;
+  border: 1.5px solid #d8f0ee;
+  border-radius: var(--radius-sm);
   font-size: 14px;
+  font-family: 'Nunito', sans-serif;
+  color: var(--text-main);
+  background: #fafefe;
   box-sizing: border-box;
+  transition: border-color 0.2s;
 }
 
 .modal-content .form-group input:focus,
 .modal-content .form-group select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(62, 207, 192, 0.12);
 }
 
 .modal-content .submit-btn {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 13px;
+  background: var(--teal-grad);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 8px;
+  font-family: 'Nunito', sans-serif;
+  box-shadow: 0 4px 16px rgba(62, 207, 192, 0.35);
+  transition: all 0.2s;
 }
 
-/* Tab Content */
-.tab-content {
+.modal-content .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(62, 207, 192, 0.5); }
+
+/* ════════════════════════════
+   DAY VIEW
+════════════════════════════ */
+.day-view { display: flex; flex-direction: column; gap: 16px; }
+
+.back-btn {
   background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1.5px solid #d8f0ee;
+  color: var(--accent);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  align-self: flex-start;
+  transition: all 0.2s;
 }
 
-.tab-content h2 {
-  color: #333;
-  margin-bottom: 16px;
-}
+.back-btn:hover { background: #d4f5f0; }
 
-.profile-info {
-  color: #666;
-  line-height: 1.8;
-}
+.selected-date { font-size: 20px; font-weight: 800; color: var(--text-main); }
 
-.profile-info p {
-  margin: 8px 0;
-}
-
-/* Bottom Navigation */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.day-content {
   background: white;
-  border-top: 1px solid #eee;
-  display: flex;
-  justify-content: space-around;
-  padding: 8px 0;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
-  z-index: 100;
-}
-
-.nav-item {
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow-card);
+  border: 1.5px solid #e8f6f4;
+  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 8px 16px;
-  background: none;
-  border: none;
-  color: #999;
-  cursor: pointer;
-  font-size: 12px;
-  transition: color 0.2s;
-  flex: 1;
+  gap: 8px;
 }
 
-.nav-item.active {
-  color: #333;
-  font-weight: 600;
+.star-placeholder { font-size: 40px; margin-bottom: 4px; }
+.no-meds-title { color: var(--text-main); font-size: 17px; font-weight: 800; }
+.no-meds-subtitle { color: var(--text-muted); font-size: 13px; font-weight: 500; }
+.day-title { color: var(--text-main); font-size: 17px; font-weight: 800; text-align: left; width: 100%; }
+.day-medications { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+.day-period { text-align: left; }
+.day-period-header {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-muted); font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px;
+}
+.day-period-meds { display: flex; flex-direction: column; gap: 6px; }
+.day-med-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; background: #f4fbfa;
+  border-radius: var(--radius-sm); border: 1px solid #e0f4f1;
+}
+.day-med-info { flex: 1; }
+.day-med-name { font-weight: 700; color: var(--text-main); font-size: 13px; }
+.day-med-dosage { color: var(--text-muted); font-size: 12px; }
+.day-med-time { color: var(--accent); font-weight: 700; font-size: 13px; }
+
+/* ════════════════════════════
+   OTHER TABS
+════════════════════════════ */
+.tab-content {
+  background: white;
+  padding: 28px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  border: 1.5px solid #e8f6f4;
 }
 
-.nav-icon {
-  font-size: 20px;
+.tab-content h2 { color: var(--text-main); margin-bottom: 12px; font-size: 18px; font-weight: 800; }
+.profile-info { color: var(--text-muted); line-height: 2; font-size: 14px; }
+.profile-info strong { color: var(--text-main); }
+
+/* ════════════════════════════
+   RESPONSIVE
+════════════════════════════ */
+@media (max-width: 1024px) {
+  .main-grid { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto; }
+  .calendar-section { grid-column: 1; grid-row: 1; }
+  .mood-section { grid-column: 1; grid-row: 2; }
+  .medications-container { grid-column: 1; grid-row: 3; }
+  .add-medication-btn { grid-row: 4; }
 }
 
-.nav-label {
-  font-size: 11px;
-  font-weight: 500;
+@media (max-width: 768px) {
+  .dashboard-sidebar { display: none; }
+  .main-content { padding: 0 16px 24px; }
+  .dashboard-header { padding: 14px 16px 10px; }
 }
 
-/* Responsive */
 @media (max-width: 480px) {
-  .dashboard-header {
-    padding: 12px 16px;
-  }
-
-  .main-content {
-    padding: 16px;
-  }
-
-  .auth-card {
-    padding: 30px 20px;
-  }
+  /* Empty media query - header nav already removed */
 }

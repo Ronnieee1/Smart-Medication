@@ -166,6 +166,7 @@ export const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [fullscreenMedication, setFullscreenMedication] = useState<Medication | null>(null);
 
   // FIX: removed `scheduled_date` from formData — we now always derive it from `selectedDate`
   const [formData, setFormData] = useState({
@@ -653,6 +654,13 @@ export const Dashboard: React.FC = () => {
           ))}
         </nav>
         <div className="sidebar-bottom">
+          <div className="sidebar-announcement">
+            <span className="announcement-icon">📢</span>
+            <div className="announcement-content">
+              <h3>Announcements</h3>
+              <p>Reminders active</p>
+            </div>
+          </div>
           <button className="sidebar-logout-btn" onClick={logout}>
             ↩ Logout
           </button>
@@ -771,7 +779,12 @@ export const Dashboard: React.FC = () => {
                     <div className="medications-list">
                       {medicationsByPeriod[period].length > 0 ? (
                         medicationsByPeriod[period].map(med => (
-                          <div key={med.id} className="medication-item">
+                          <div 
+                            key={med.id} 
+                            className="medication-item"
+                            onClick={() => setFullscreenMedication(med)}
+                            style={{ cursor: 'pointer' }}
+                          >
                             <div className="med-avatar">💊</div>
                             <div className="med-info">
                               <div className="med-name">{med.name}</div>
@@ -788,7 +801,10 @@ export const Dashboard: React.FC = () => {
                                   title={opt.label}
                                   className={`status-btn ${med.status === opt.value ? 'active' : ''}`}
                                   style={{ color: med.status === opt.value ? opt.color : undefined }}
-                                  onClick={() => handleUpdateMedicationStatus(med.id, opt.value)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleUpdateMedicationStatus(med.id, opt.value);
+                                  }}
                                 >
                                   {opt.emoji}
                                 </button>
@@ -796,7 +812,10 @@ export const Dashboard: React.FC = () => {
                             </div>
                             <button
                               className="delete-btn"
-                              onClick={() => handleDeleteMedication(med.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteMedication(med.id);
+                              }}
                             >
                               ✕
                             </button>
@@ -833,6 +852,86 @@ export const Dashboard: React.FC = () => {
               onClose={() => setShowAddMedication(false)}
               onChange={handleFormChange}
             />
+          )}
+
+          {/* ── FULLSCREEN MEDICATION VIEW ── */}
+          {fullscreenMedication && (
+            <div className="fullscreen-med-overlay">
+              <div className="fullscreen-med-container">
+                <button
+                  className="fullscreen-close-btn"
+                  onClick={() => setFullscreenMedication(null)}
+                >
+                  ✕
+                </button>
+                <div className="fullscreen-med-content">
+                  <div className="fullscreen-med-header">
+                    <div className="fullscreen-med-avatar">💊</div>
+                    <div className="fullscreen-med-title-section">
+                      <h2 className="fullscreen-med-name">{fullscreenMedication.name}</h2>
+                      <p className="fullscreen-med-label">{fullscreenMedication.label}</p>
+                    </div>
+                  </div>
+
+                  <div className="fullscreen-med-details">
+                    <div className="detail-card">
+                      <span className="detail-label">Dosage</span>
+                      <span className="detail-value">{fullscreenMedication.dosage}</span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Scheduled Time</span>
+                      <span className="detail-value">{convertTo12Hour(fullscreenMedication.time)}</span>
+                    </div>
+                    <div className="detail-card">
+                      <span className="detail-label">Date</span>
+                      <span className="detail-value">
+                        {new Date(fullscreenMedication.scheduled_date).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="fullscreen-status-section">
+                    <p className="status-section-title">Mark as:</p>
+                    <div className="fullscreen-status-buttons">
+                      {STATUS_OPTIONS.map(opt => (
+                        <button
+                          key={opt.value}
+                          className={`fullscreen-status-btn ${fullscreenMedication.status === opt.value ? 'active' : ''}`}
+                          style={{
+                            borderColor: opt.color,
+                            color: fullscreenMedication.status === opt.value ? opt.color : '#9ca3af',
+                          }}
+                          onClick={() => {
+                            handleUpdateMedicationStatus(fullscreenMedication.id, opt.value);
+                            // Update fullscreen view to reflect status change
+                            setFullscreenMedication(prev => 
+                              prev ? { ...prev, status: opt.value } : null
+                            );
+                          }}
+                        >
+                          <span className="fs-btn-emoji">{opt.emoji}</span>
+                          <span className="fs-btn-label">{opt.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    className="fullscreen-delete-btn"
+                    onClick={() => {
+                      handleDeleteMedication(fullscreenMedication.id);
+                      setFullscreenMedication(null);
+                    }}
+                  >
+                    Delete Medication
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
 
           {/* ── DAY VIEW ── */}

@@ -111,6 +111,10 @@
 .sidebar-bottom {
   padding: 0 12px;
   margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
 }
 
 .sidebar-logout-btn {
@@ -392,6 +396,46 @@
   transform: translateY(-1px);
 }
 
+/* Announcement — sidebar */
+.sidebar-announcement {
+  background: linear-gradient(135deg, #ffecd2 0%, #ffd699 100%);
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  box-shadow: 0 4px 16px rgba(255, 193, 7, 0.2);
+  border: 1.5px solid #ffe082;
+  flex: 1;
+}
+
+.sidebar-announcement .announcement-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.sidebar-announcement .announcement-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-announcement .announcement-content h3 {
+  margin: 0;
+  color: #c67c1e;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.sidebar-announcement .announcement-content p {
+  margin: 2px 0 0 0;
+  color: #d4860f;
+  font-size: 10px;
+  font-weight: 600;
+}
+
 /* Period sections */
 .period-section {
   border-bottom: 1px solid #edf8f6;
@@ -657,6 +701,230 @@
 .day-med-name { font-weight: 700; color: var(--text-main); font-size: 13px; }
 .day-med-dosage { color: var(--text-muted); font-size: 12px; }
 .day-med-time { color: var(--accent); font-weight: 700; font-size: 13px; }
+
+/* ════════════════════════════
+   FULLSCREEN MEDICATION VIEW
+════════════════════════════ */
+.fullscreen-med-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(45, 74, 86, 0.5);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  padding: 20px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.fullscreen-med-container {
+  background: white;
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(62, 207, 192, 0.3);
+  position: relative;
+  padding: 32px;
+}
+
+.fullscreen-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #f0fbfa;
+  border: none;
+  color: var(--text-muted);
+  font-size: 24px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.fullscreen-close-btn:hover {
+  background: #d4f5f0;
+  color: var(--accent);
+  transform: rotate(90deg);
+}
+
+.fullscreen-med-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.fullscreen-med-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #edf8f6;
+}
+
+.fullscreen-med-avatar {
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #d4f5f0 0%, #c2eef8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  box-shadow: 0 4px 16px rgba(62, 207, 192, 0.2);
+}
+
+.fullscreen-med-title-section {
+  flex: 1;
+  padding-top: 4px;
+}
+
+.fullscreen-med-name {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.fullscreen-med-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--accent);
+  margin: 0;
+}
+
+.fullscreen-med-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  background: #f9fffe;
+  border: 1.5px solid #edf8f6;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+
+.detail-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(62, 207, 192, 0.12);
+}
+
+.detail-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+}
+
+.detail-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.fullscreen-status-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f0fbfa 0%, #e8f8f5 100%);
+  border-radius: var(--radius-sm);
+  border: 2px solid #edf8f6;
+}
+
+.status-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.fullscreen-status-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.fullscreen-status-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 100px;
+  padding: 14px;
+  background: white;
+  border: 2.5px solid #d8f0ee;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Nunito', sans-serif;
+}
+
+.fullscreen-status-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(62, 207, 192, 0.2);
+}
+
+.fullscreen-status-btn.active {
+  background: linear-gradient(135deg, #d4f5f0 0%, #c2eef8 100%);
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px rgba(62, 207, 192, 0.3);
+}
+
+.fs-btn-emoji {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.fs-btn-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fullscreen-delete-btn {
+  padding: 12px 20px;
+  background: #ffebee;
+  border: 2px solid #ffcdd2;
+  color: #c84a4a;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  transition: all 0.2s;
+}
+
+.fullscreen-delete-btn:hover {
+  background: #ffcdd2;
+  box-shadow: 0 4px 12px rgba(224, 92, 92, 0.2);
+  transform: translateY(-1px);
+}
 
 /* ════════════════════════════
    OTHER TABS
@@ -991,7 +1259,7 @@
   }
 }
 @media (max-width: 1024px) {
-  .main-grid { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto; }
+  .main-grid { grid-template-columns: 1fr; grid-template-rows: auto auto auto; }
   .calendar-section { grid-column: 1; grid-row: 1; }
   .mood-section { grid-column: 1; grid-row: 2; }
   .medications-container { grid-column: 1; grid-row: 3; }
